@@ -21,7 +21,6 @@ def get_google_clients(
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             json_credentials_path, SCOPES
         )
-        print(creds)
         client = gspread.authorize(creds)
         service = build('drive', 'v3', credentials=creds)
         logging.info('Using local JSON credentials')

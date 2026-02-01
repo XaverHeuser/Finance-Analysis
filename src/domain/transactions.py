@@ -119,4 +119,4 @@ def append_transaction(
 ) -> None:
     """Append a new row to the DataFrame."""
     # Append new row to DataFrame
-    df.loc[len(df)] = [t_name, t_value, t_type, t_date, None, None]
+    df.loc[len(df)] = [t_name, t_value, t_type, t_date, None, None, None]

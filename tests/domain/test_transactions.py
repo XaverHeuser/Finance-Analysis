@@ -134,7 +134,7 @@ def test_extract_transaction_info_default_name():
 
 def test_append_transaction_adds_row():
     """Test appending a transaction to the DataFrame."""
-    df = pd.DataFrame(columns=['Name', 'Wert', 'Typ', 'Datum', 'Col5', 'Col6'])
+    df = pd.DataFrame(columns=['Name', 'Wert', 'Typ', 'Datum', 'Col5', 'Col6', 'Col7'])
     append_transaction(df, 'Supermarkt', 100.0, 'Ausgabe', date(2025, 1, 1))
     assert len(df) == 1
     row = df.iloc[0]
