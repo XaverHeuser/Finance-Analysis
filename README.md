@@ -16,24 +16,14 @@ This project automates the analysis of private finance data by processing monthl
 |:--------------------------------------------------------- |---------   |-----------------------|-----------------------------------   |
 | 1. Download account statement from bank                   | Manual     | PC (local) or mobile  | As soon as available (1st or 2nd day of the month) |
 | 2. Upload account statement to designated GDrive folder   | Manual     | PC (local) or mobile  | After download                       |
-| 3. Analyze account statement and write data to GSheet     | Script     | GCP                   | 0 7 3 * *                            |
+| 3. Analyze account statement and write data to GSheet     | Script     | GCP                   | 0 7 2 * *                            |
 | 4. Visualize data in Looker Studio                        | Script     | GCP                   | 24/7 available                       |
-
-
-## Getting Started
-
-- tbd.
-
-## Usage
-
-- tbd.
 
 
 ## Deployment
 
 - The app/ main script is deployed on GCP
-- Execution status: 0 7 3 * * (Every third day of a month at 7am.)
-- tbd.
+- Execution status: 0 7 2 * * (Every second day of a month at 7am.)
 
 
 ### Deploy changes
