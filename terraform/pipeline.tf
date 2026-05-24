@@ -1,8 +1,7 @@
 resource "google_service_account" "finance_analysis_job_sa" {
-    account_id   = "finance-analysis-job-sa"
-    display_name = "Service Account for Finance Analysis Job"
+  account_id   = "finance-analysis-job-sa"
+  display_name = "Service Account for Finance Analysis Job"
 }
-
 
 resource "google_cloud_run_v2_job" "finance_analysis_job" {
   name                = "finance-analysis-job"
@@ -16,11 +15,28 @@ resource "google_cloud_run_v2_job" "finance_analysis_job" {
       max_retries     = 1
 
       containers {
-        image = "gcr.io/${var.project_id}/finance-analysis:latest"
-        args  = ["--input", "gs://${google_storage_bucket.cloudbuild_bucket.name}/input/", "--output", "gs://${google_storage_bucket.cloudbuild_bucket.name}/output/"]
-      }
+        image = "us-docker.pkg.dev/cloudrun/container/hello:latest"
 
-      # TODO: Add secrets spreadsheet_id, temp_folder_id, regular_folder_id
+        # Dynamically inject the runtime secret variables configured in Secret Manager
+        dynamic "env" {
+          for_each = toset(var.finance_analysis_job_secrets)
+          content {
+            name = env.key
+            value_source {
+              secret_key_ref {
+                secret  = google_secret_manager_secret.secrets[env.key].id
+                version = "latest"
+              }
+            }
+          }
+        }
+      }
     }
   }
+
+  depends_on = [
+    google_project_service.run_api,
+    google_secret_manager_secret.secrets,
+    google_secret_manager_secret_iam_member.job_sa_secret_access
+  ]
 }
