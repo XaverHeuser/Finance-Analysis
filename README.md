@@ -4,6 +4,7 @@ An automated ETL data processing application designed to extract private transac
 
 [![Python Version](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/)
 [![GCP App](https://img.shields.io/badge/GCP-Cloud--Run-orange.svg)](https://cloud.google.com/run)
+[![Terraform as IAC](https://img.shields.io/badge/IAC-Terraform-mediumpurple.svg)](https://developer.hashicorp.com/terraform)
 [![Continuous Integration](https://img.shields.io/badge/CI-Ruff%20%7C%20Mypy%20%7C%20Bandit%20%7C%20Pytest-brightgreen.svg)](https://github.com/XaverHeuser/finance-analysis/actions)
 [![Docker Configuration](https://img.shields.io/badge/Docker-Containerized-blue.svg)](Dockerfile)
 
@@ -12,6 +13,7 @@ An automated ETL data processing application designed to extract private transac
 ## 🚀 Key Features
 
 - **Automated Statement Ingestion**: Scans designated Google Drive input directories to locate and extract uncompiled PDF bank account statement structures natively
+- **Infrastructure as Code**: Terraform as IAC Tool to declerate the GCP infrastructure and to avoid the need of doing this manually
 - **Layout-Preserving Text Parsing**: Integrates advanced tabular layout-mode extractions via `pdfplumber` to maintain spacing bounds for accounting balance audits
 - **Index-Boundary Transaction Mapping**: Programmatically evaluates isolated byte arrays bounded by historical ledger indicators (`alter Kontostand` and `neuer Kontostand`) to isolate row objects
 - **Preserved Schema Updates**: Updates remote sheets through decoupled data-frame updates starting precisely beneath header validation lines to keep styling intact
@@ -24,7 +26,7 @@ An automated ETL data processing application designed to extract private transac
 
 The chart below maps structural boundaries across user upload layers, serverless job schedulers, and Google API authorization boundaries during active batch sync runs:
 
-[![Architecture](https://img.plantuml.biz/plantuml/svg/VLF1Zfim4BtxAwRfeUqXFVR0eTfi86cgL4MmqQfIfSY1IR1YR3Gskqch_VSEXcMRT5LEC9xtPjxpuyPvIRwjDIoKaQR0xSn8VNRARLTcJz9vQWlV4eetli8QeT5I6U6EoZIIP0s5hHjhqFZSdpK2OU6bEMWKGXRU4ams3ca2qi6i-nQ5jcq9awMrt0JtbewkaGL2R6ic3eqlnTy2-2cbbplfS4J5f1xmftb_btnBjullwpZ9jgluGm2lJDFwXTKb4hnTgqFbKsMEh_Fa5Q9tJ9IdMJAByoz9SZSIBSFfmF43jRQF_zycIvQRzIoxNcX6HSKD_wxq9AxCc8UlL4k_jrHF1lMZmJ3f6_AYmhBLI3npJjR0sjgcdpKU3NDkTOklasIjWQzs5r2XqXLwq98GpJ3y2fiNf1e_ZEfUGzDJ9qKPZxJlBkrP3gzrv4rotvRA1inG6SPqXfZCbeEtuXtCBR6Tx2_VuW6TLonkqPs5wC2Kff__ljy8DessidIGnWkU8pq7r7ZnuiAqPCIpl0YI4nQjHzSfXzeQN-cp4AFyq7t1dvmySOmTDEKUzefJVTdSPoI2Ur8ThS7748-hhei4HEn2j_B8s1lPYnjn4QII75FUuScpD49PEtXGiiCrkgrtI48C4PqoSh0sWayV8J-Rek9Wg5zCa18wDaK6CpShSOEcvD_z3m00)](https://editor.plantuml.com/uml/VLF1Zfim4BtxAwRfeUqXFVR0eTfi86cgL4MmqQfIfSY1IR1YR3Gskqch_VSEXcMRT5LEC9xtPjxpuyPvIRwjDIoKaQR0xSn8VNRARLTcJz9vQWlV4eetli8QeT5I6U6EoZIIP0s5hHjhqFZSdpK2OU6bEMWKGXRU4ams3ca2qi6i-nQ5jcq9awMrt0JtbewkaGL2R6ic3eqlnTy2-2cbbplfS4J5f1xmftb_btnBjullwpZ9jgluGm2lJDFwXTKb4hnTgqFbKsMEh_Fa5Q9tJ9IdMJAByoz9SZSIBSFfmF43jRQF_zycIvQRzIoxNcX6HSKD_wxq9AxCc8UlL4k_jrHF1lMZmJ3f6_AYmhBLI3npJjR0sjgcdpKU3NDkTOklasIjWQzs5r2XqXLwq98GpJ3y2fiNf1e_ZEfUGzDJ9qKPZxJlBkrP3gzrv4rotvRA1inG6SPqXfZCbeEtuXtCBR6Tx2_VuW6TLonkqPs5wC2Kff__ljy8DessidIGnWkU8pq7r7ZnuiAqPCIpl0YI4nQjHzSfXzeQN-cp4AFyq7t1dvmySOmTDEKUzefJVTdSPoI2Ur8ThS7748-hhei4HEn2j_B8s1lPYnjn4QII75FUuScpD49PEtXGiiCrkgrtI48C4PqoSh0sWayV8J-Rek9Wg5zCa18wDaK6CpShSOEcvD_z3m00)
+[![Architecture](https://img.plantuml.biz/plantuml/svg/VLH1Rjim4Bpp5LldqXxSOmyw574jsNNXe88L8mXGmA2fTKIO8eKbcSGjylUIj2B7Rb2TH79cTdSuqhLrd9nl5SoavbhWPgAvEbXfDmkz8suTUU4y8VlW6cmHEiMbPdOlTSU9jo1CsncDsbNke108XUFwGI5ZN3X3C5fRf15m2vEuPWCUHhT8n7U6sdGyhE3g1clfsz9J5tM4Chw6qToO80jtXlQsum8XDsre9N5FctyOXAVcZc-vnO6Latp4N_hZRN5JRcO_btcnsYpoJucyq9rtCwDg9BXQoeV6bLBltzUf6aHdWr1Lhef9NdqlYjj1Q9vEUurxLCey_R-RLJ5VBoUhouOc99e0-BUbbqipfcbLAku66-VJiZVXZTD7N2KQhBr22gMdP3GiZUcE9OUZljmtvV5zaPNNyCDi4oljn8qZQKw8kYz-mQq4oSxrfU9h0ht4YQHsIBjuTwzJXRRsePFA-LgQnEbt-ZBH5xqoTMynIy62COs_lhtB3DQTChosKEQp8CPTYAzsx9Ipn0X-PP2Z2BC7H4p3MUhPoPbn7U2l8sTGFAFmaH7SWDPerwW3OuCb2NtMJl7iA7mJ5hfw1piPedqEFiOdWpkIKLRZKqhE1Uei75bm9auuA1xDFKusy38eELcCdzYp2quGyjR2e-IHrodVRf4OwzCx3ipUxWo-V8Rge4KJmY9_1u6Iq0OFkPCXFUi5kqPTXt_7Nm00)](https://editor.plantuml.com/uml/VLH1Rjim4Bpp5LldqXxSOmyw574jsNNXe88L8mXGmA2fTKIO8eKbcSGjylUIj2B7Rb2TH79cTdSuqhLrd9nl5SoavbhWPgAvEbXfDmkz8suTUU4y8VlW6cmHEiMbPdOlTSU9jo1CsncDsbNke108XUFwGI5ZN3X3C5fRf15m2vEuPWCUHhT8n7U6sdGyhE3g1clfsz9J5tM4Chw6qToO80jtXlQsum8XDsre9N5FctyOXAVcZc-vnO6Latp4N_hZRN5JRcO_btcnsYpoJucyq9rtCwDg9BXQoeV6bLBltzUf6aHdWr1Lhef9NdqlYjj1Q9vEUurxLCey_R-RLJ5VBoUhouOc99e0-BUbbqipfcbLAku66-VJiZVXZTD7N2KQhBr22gMdP3GiZUcE9OUZljmtvV5zaPNNyCDi4oljn8qZQKw8kYz-mQq4oSxrfU9h0ht4YQHsIBjuTwzJXRRsePFA-LgQnEbt-ZBH5xqoTMynIy62COs_lhtB3DQTChosKEQp8CPTYAzsx9Ipn0X-PP2Z2BC7H4p3MUhPoPbn7U2l8sTGFAFmaH7SWDPerwW3OuCb2NtMJl7iA7mJ5hfw1piPedqEFiOdWpkIKLRZKqhE1Uei75bm9auuA1xDFKusy38eELcCdzYp2quGyjR2e-IHrodVRf4OwzCx3ipUxWo-V8Rge4KJmY9_1u6Iq0OFkPCXFUi5kqPTXt_7Nm00)
 
 ## ⚙️ Environment Configuration
 
@@ -105,6 +107,50 @@ The production system operates on a serverless scheduling model inside Google Cl
 
 - Cron Trigger: `0 7 2 * *` (Executes automatically at 7:00 AM on the 2nd day of each calendar month).
 
+## 🌍 Infrastructure as Code (Terraform)
+
+The project's Google Cloud Platform (GCP) infrastructure is fully modularized and provisioned using **Terraform**. The deployment utilizes variables targeting a custom repository setup.
+
+### Core Architecture Components
+
+- **`providers.tf`**: Configures the HashiCorp Google provider (pinned to `v6.8.0`) and programmatically enables required remote APIs (`Cloud Run`, `Cloud Scheduler`, `Cloud Build`, `Artifact Registry`, `Secret Manager`, and `Google Drive`).
+- **`variables.tf`**: Sets localized deployment variables, defaulting to the `finance-analysis-id` project ID inside the `europe-west1` geographical region.
+- **`cloudbuild.tf`**: Spins up a secure Docker Artifact Registry (`finance-analysis-repo`) to house application images. It also initializes a dedicated pipeline service account (`cloudbuild-runner-sa`) granted minimal-privilege roles (`run.invoker`, `storage.admin`, `logging.logWriter`, `artifactregistry.writer`, and `cloudbuild.builds.builder`).
+- **`pipeline.tf`**: Defines the serverless `finance-analysis-job` on Cloud Run. It configures a task timeout window of 30 minutes (`1800s`) and maps structural runtime parameters (`SPREADSHEET_ID`, `TEMP_FOLDER_ID`, `REGULAR_FOLDER_ID`) securely using dynamic environment blocks tied to Secret Manager references.
+- **`secrets.tf`**: Instantiates locked Secret Manager parameter definitions, providing explicit read/access permissions exclusively to the Cloud Run Job runtime service account.
+- **`orchestration.tf`**: Establishes a serverless `google_cloud_scheduler_job` engine running on a Cron loop triggered automatically at **7:00 AM on the 2nd day of each month** to wake up the analysis job pipeline safely.
+
+### Provisioning Infrastructure Locally
+
+1. Create GCP project
+2. Authenticate to project in `gcloud` terminal
+3. Initialize Workspace & Providers
+
+    ```bash
+    # Create folder and initialize terraform
+    cd terraform
+    terraform init
+
+    # Review execution spec
+    terraform plan
+
+    # Deploy terraform code
+    terraform apply
+    ```
+
+4. Set secrets in Secret Manager
+5. Apply Cloudbuild
+
+    ```bash
+    gcloud builds submit --config cloudbuild.yaml .
+    ```
+
+6. Update Cloud Run Job with Docker Image
+
+    ```bash
+    gcloud run jobs update finance-analysis-job --image=europe-west1-docker.pkg.dev/finance-analysis-id/finance-analysis-repo/analysis-image:latest  --region=europe-west1
+    ```
+
 ## 🔒 Security Posture & Vulnerability Logs
 
 ### Handled Security Advisories: `pip` (GHSA-4xh5-x5gv-qwph)
@@ -129,6 +175,11 @@ The continuous security scanning infrastructure flags a specific structural advi
 │   ├── models/              # Dataclass modeling schemas
 │   ├── processing/          # Core transaction orchestration logic
 │   └── main.py              # Application entry point gateway
+├── terraform/               # Infrastructure as Code infrastructure definitions
+|   ├── providers.tf         # Pinned provider dependencies & API activation lists
+|   ├── pipeline.tf          # Serverless Cloud Run Job definitions
+|   ├── variables.tf         # Project resource definitions & regional controls
+|   ├── ...
 ├── tests/                   # Test suite matching application file layouts
 ├── Dockerfile               # Application container build script
 ├── cloudbuild.yaml          # Google Cloud Build compilation pipeline
