@@ -50,7 +50,7 @@ jobs:
           path: head
 
       - name: Run Infracost Diff
-        uses: infracost/actions/diff@a1f1aab438c2d0e642e7cd596a1c8750c7c75a5e
+        uses: infracost/actions/diff@v4
         with:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
           base-path: ${{ github.event.action != 'closed' && 'base' || '' }}

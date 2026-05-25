@@ -13,9 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Run Infracost Scan
-        uses: infracost/actions/scan@a1f1aab438c2d0e642e7cd596a1c8750c7c75a5e
+      
+      - uses: infracost/actions/scan@v4
         with:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
           path: .
