@@ -9,4 +9,8 @@ variable "region" {
   description = "The region in which to create the resources."
   default     = "europe-west1"
 }
-
+variable "zone" {
+  type        = string
+  description = "The zone in which to create the resources."
+  default     = "europe-west1-b"
+}
