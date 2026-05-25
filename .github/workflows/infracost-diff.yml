@@ -17,46 +17,50 @@ permissions:
 jobs:
   infracost-diff:
     runs-on: ubuntu-latest
-
+    
+    # This guarantees the token is injected directly into the shell environment
     env:
       INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
 
     steps:
-      - name: Get PR details
-        id: pr
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ inputs.pr-number || github.event.pull_request.number }}
-        run: |
-          if [ -n "${{ inputs.pr-number }}" ]; then
-            BASE_REF=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json baseRefName -q .baseRefName)
-            HEAD_REF=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefName -q .headRefName)
-          else
-            BASE_REF="${{ github.event.pull_request.base.ref }}"
-            HEAD_REF="${{ github.event.pull_request.head.ref }}"
-          fi
-          echo "base-ref=${BASE_REF}" >> $GITHUB_OUTPUT
-          echo "head-ref=${HEAD_REF}" >> $GITHUB_OUTPUT
-          echo "pr-number=${PR_NUMBER}" >> $GITHUB_OUTPUT
-
       - name: Checkout base branch
-        if: github.event.action != 'closed'
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.pr.outputs.base-ref }}
+          ref: ${{ github.event.pull_request.base.ref }}
           path: base
 
       - name: Checkout head branch
-        if: github.event.action != 'closed'
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.pr.outputs.head-ref }}
+          ref: ${{ github.event.pull_request.head.ref }}
           path: head
 
-      - name: Run Infracost Diff
-        uses: infracost/actions/diff@v4
+      # Installs the standalone Infracost CLI tool onto the runner securely
+      - name: Setup Infracost CLI
+        uses: infracost/actions-setup@v3
         with:
-          api-key: ${{ secrets.INFRACOST_API_KEY }}
-          base-path: ${{ github.event.action != 'closed' && 'base/terraform' || '' }}
-          head-path: ${{ github.event.action != 'closed' && 'head/terraform' || '' }}
-          pr-number: ${{ steps.pr.outputs.pr-number }}
+          api_key: ${{ secrets.INFRACOST_API_KEY }}
+
+      # Step 1: Generate the cost baseline from your main/base branch
+      - name: Generate Base Cost Baseline
+        run: |
+          cd base/terraform
+          infracost breakdown --path . --format json --out-file /tmp/infracost-base.json
+
+      # Step 2: Generate the new cost projection from your current feature/head branch
+      - name: Generate Head Cost Projection
+        run: |
+          cd head/terraform
+          infracost breakdown --path . --format json --out-file /tmp/infracost-head.json
+
+      # Step 3: Combine both baselines to calculate the financial delta
+      - name: Calculate Cost Diff
+        run: |
+          infracost diff --path /tmp/infracost-head.json --compare-to /tmp/infracost-base.json --format json --out-file /tmp/infracost-diff.json
+
+      # # Step 4: Post the formatted markdown table comment directly onto your Pull Request
+      # - name: Post Infracost Comment to PR
+      #   uses: infracost/actions-comment@v3
+      #   with:
+      #     path: /tmp/infracost-diff.json
+      #     behavior: update
