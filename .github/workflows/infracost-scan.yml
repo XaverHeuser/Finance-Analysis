@@ -18,4 +18,4 @@ jobs:
         uses: infracost/actions/scan@a1f1aab438c2d0e642e7cd596a1c8750c7c75a5e
         with:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
-          path: .
+          path: terraform

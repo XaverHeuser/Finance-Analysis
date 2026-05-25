@@ -53,6 +53,6 @@ jobs:
         uses: infracost/actions/diff@a1f1aab438c2d0e642e7cd596a1c8750c7c75a5e
         with:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
-          base-path: ${{ github.event.action != 'closed' && 'base' || '' }}
-          head-path: ${{ github.event.action != 'closed' && 'head' || '' }}
+          base-path: ${{ github.event.action != 'closed' && 'base/terraform' || '' }}
+          head-path: ${{ github.event.action != 'closed' && 'head/terraform' || '' }}
           pr-number: ${{ steps.pr.outputs.pr-number }}
