@@ -9,6 +9,10 @@ permissions:
 jobs:
   infracost:
     runs-on: ubuntu-latest
+
+    env:
+      INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+      
     steps:
       # Checkout steps are skipped on closed PRs since diffing is not needed.
       - uses: actions/checkout@v4
