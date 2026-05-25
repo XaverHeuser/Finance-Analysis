@@ -1,0 +1,76 @@
+name: Infracost
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: "Pull request number to scan"
+        required: false
+        type: number
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  infracost-diff:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR branch
+        if: github.event.action != 'closed'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: head
+
+      - name: Checkout base branch
+        if: github.event.action != 'closed'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+
+      - name: Validate Infracost API key is available
+        run: |
+          test -n "${INFRACOST_API_KEY}" || {
+            echo "INFRACOST_API_KEY is empty or unavailable"
+            exit 1
+          }
+        env:
+          INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+
+      - name: Run Infracost Diff
+        uses: infracost/actions/diff@v4
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+          base-path: ${{ github.event.action != 'closed' && 'base/terraform' || '' }}
+          head-path: ${{ github.event.action != 'closed' && 'head/terraform' || '' }}
+
+  infracost-scan:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Validate Infracost API key is available
+        run: |
+          test -n "${INFRACOST_API_KEY}" || {
+            echo "INFRACOST_API_KEY is empty or unavailable"
+            exit 1
+          }
+        env:
+          INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+
+      - name: Run Infracost Scan
+        uses: infracost/actions/scan@v4
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+          path: terraform
