@@ -1,66 +1,31 @@
-name: Infracost Diff
-
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
-  workflow_dispatch:
-    inputs:
-      pr-number:
-        description: "Pull request number to scan"
-        required: true
-        type: number
+    types: [opened, synchronize, closed, reopened]
 
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
-  infracost-diff:
+  infracost:
     runs-on: ubuntu-latest
-    
-    # This guarantees the token is injected directly into the shell environment
-    env:
-      INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
-
     steps:
-      - name: Checkout base branch
-        uses: actions/checkout@v4
+      # Checkout steps are skipped on closed PRs since diffing is not needed.
+      - uses: actions/checkout@v4
+        if: github.event.action != 'closed'
+        with:
+          path: head
+
+      - uses: actions/checkout@v4
+        if: github.event.action != 'closed'
         with:
           ref: ${{ github.event.pull_request.base.ref }}
           path: base
 
-      - name: Checkout head branch
-        uses: actions/checkout@v4
+      # The diff action runs on every event. On closed PRs it skips diffing
+      # and only updates the PR status in the Infracost dashboard.
+      - uses: infracost/actions/diff@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          path: head
-
-      # Installs the standalone Infracost CLI tool onto the runner securely
-      - name: Setup Infracost CLI
-        uses: infracost/actions-setup@v3
-        with:
-          api_key: ${{ secrets.INFRACOST_API_KEY }}
-
-      # Step 1: Generate the cost baseline from your main/base branch
-      - name: Generate Base Cost Baseline
-        run: |
-          cd base/terraform
-          infracost breakdown --path . --format json --out-file /tmp/infracost-base.json
-
-      # Step 2: Generate the new cost projection from your current feature/head branch
-      - name: Generate Head Cost Projection
-        run: |
-          cd head/terraform
-          infracost breakdown --path . --format json --out-file /tmp/infracost-head.json
-
-      # Step 3: Combine both baselines to calculate the financial delta
-      - name: Calculate Cost Diff
-        run: |
-          infracost diff --path /tmp/infracost-head.json --compare-to /tmp/infracost-base.json --format json --out-file /tmp/infracost-diff.json
-
-      # # Step 4: Post the formatted markdown table comment directly onto your Pull Request
-      # - name: Post Infracost Comment to PR
-      #   uses: infracost/actions-comment@v3
-      #   with:
-      #     path: /tmp/infracost-diff.json
-      #     behavior: update
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+          base-path: base
+          head-path: head
