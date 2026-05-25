@@ -17,6 +17,10 @@ permissions:
 jobs:
   infracost-diff:
     runs-on: ubuntu-latest
+
+    env:
+      INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+
     steps:
       - name: Get PR details
         id: pr
@@ -53,6 +57,6 @@ jobs:
         uses: infracost/actions/diff@v4
         with:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
-          base-path: ${{ github.event.action != 'closed' && 'base' || '' }}
-          head-path: ${{ github.event.action != 'closed' && 'head' || '' }}
+          base-path: ${{ github.event.action != 'closed' && 'base/terraform' || '' }}
+          head-path: ${{ github.event.action != 'closed' && 'head/terraform' || '' }}
           pr-number: ${{ steps.pr.outputs.pr-number }}
