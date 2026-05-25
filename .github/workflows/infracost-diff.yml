@@ -17,6 +17,10 @@ permissions:
 jobs:
   infracost-diff:
     runs-on: ubuntu-latest
+
+    env:
+      INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+      
     steps:
       - name: Get PR details
         id: pr
