@@ -10,3 +10,8 @@ variable "region" {
   default     = "europe-west1"
 }
 
+variable "alert_recipient_email" {
+  type        = string
+  description = "The private email address of the developer receiving alerts."
+  sensitive   = true
+}
