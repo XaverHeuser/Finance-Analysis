@@ -30,12 +30,6 @@ resource "google_monitoring_alert_policy" "cloud_run_job_failures" {
       }
     }
   }
-  alert_strategy {
-    notification_rate_limit {
-      # Period between notifications. Must be at least 300s (5 minutes) for log-based alerts
-      period = "300s"
-    }
-  }
 
   documentation {
     content   = "The finance analysis job has failed. Check Cloud Logging logs for error traceback stacks."
