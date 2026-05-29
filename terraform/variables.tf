@@ -15,3 +15,12 @@ variable "alert_recipient_email" {
   description = "The private email address of the developer receiving alerts."
   sensitive   = true
 }
+
+variable "github_username" {
+  type    = string
+  default = "XaverHeuser"
+}
+variable "github_repo_name" {
+  type    = string
+  default = "Finance-Analysis"
+}
