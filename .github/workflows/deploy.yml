@@ -10,7 +10,7 @@ env:
   PROJECT_ID: finance-analysis-id # Change this to your ACTUAL GCP project ID
   REGION: europe-west1
   REPOSITORY: finance-analysis-repo
-  IMAGE_NAME: finance-analysis
+  IMAGE_NAME: finance-analysis-image
   JOB_NAME: finance-analysis-job
   WIF_PROVIDER: "projects/18888783623/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider"
   SA_EMAIL: "github-actions-deployer@finance-analysis-id.iam.gserviceaccount.com"
