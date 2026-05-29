@@ -3,7 +3,16 @@ name: Build and Deploy Cloud Run Job
 on:
   push:
     branches:
-      - main
+      - fix-deploy-pipe # main
+
+      # Define environment variables to avoid repetition and typos
+env:
+  PROJECT_ID: finance-analysis-id # Change this to your ACTUAL GCP project ID
+  REGION: europe-west1
+  REPOSITORY: finance-analysis-repo
+  IMAGE_NAME: finance-analysis
+  JOB_NAME: finance-analysis-job
+
 
 jobs:
   build-and-deploy:
@@ -24,24 +33,47 @@ jobs:
         with:
           project_id: cool-plasma-452619-v4
           version: '426.0.0'
-
-      - name: Configure Docker for GCR
+      
+      # Configure Docker specifically for Artifact Registry (pkg.dev) instead of GCR
+      - name: Configure Docker for Artifact Registry
         run: |
-          gcloud auth configure-docker
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      # - name: Configure Docker for GCR
+      #   run: |
+      #     gcloud auth configure-docker
 
       # Build Docker image
+      # - name: Build Docker image
+      #   run: |
+      #     docker build -t gcr.io/cool-plasma-452619-v4/finance-analysis:latest .
+      
+          # Build Docker image tagged for Artifact Registry
       - name: Build Docker image
         run: |
-          docker build -t gcr.io/cool-plasma-452619-v4/finance-analysis:latest .
+          docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+                       -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest .
+
 
       # Push Docker image to Google Container Registry
+      # - name: Push Docker image
+      #   run: |
+      #     docker push gcr.io/cool-plasma-452619-v4/finance-analysis:latest
+      # Push Docker image
       - name: Push Docker image
         run: |
-          docker push gcr.io/cool-plasma-452619-v4/finance-analysis:latest
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }} --all-tags
 
       # Update Cloud Run Job
-      - name: Update Cloud Run Job
-        run: |
-          gcloud run jobs update finance-analysis-job \
-            --image gcr.io/cool-plasma-452619-v4/finance-analysis:latest \
-            --region europe-west3
+      # - name: Update Cloud Run Job
+      #   run: |
+      #     gcloud run jobs update finance-analysis-job \
+      #       --image gcr.io/cool-plasma-452619-v4/finance-analysis:latest \
+      #       --region europe-west3
+
+      # Update Cloud Run Job using the newly built image
+      # - name: Update Cloud Run Job
+      #   run: |
+      #     gcloud run jobs update ${{ env.JOB_NAME }} \
+      #       --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+      #       --region ${{ env.REGION }}
