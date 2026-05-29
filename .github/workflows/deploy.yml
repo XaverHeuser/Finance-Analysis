@@ -5,43 +5,60 @@ on:
     branches:
       - main
 
+# Define environment variables
+env:
+  PROJECT_ID: finance-analysis-id
+  REGION: europe-west1
+  REPOSITORY: finance-analysis-repo
+  IMAGE_NAME: finance-analysis-image
+  JOB_NAME: finance-analysis-job
+  WIF_PROVIDER: "projects/18888783623/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider"
+  SA_EMAIL: "github-actions-deployer@finance-analysis-id.iam.gserviceaccount.com"
+
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
+    # Request the OIDC token from GitHub
+    permissions:
+      contents: 'read'
+      id-token: 'write'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Authenticate to GCP
+        # Authenticate to GCP using the Workload Identity Federation setup in Terraform
+      - name: Authenticate to GCP via Workload Identity Federation
         uses: google-github-actions/auth@v3
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.SA_EMAIL }}
 
       # Install Cloud SDK
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v3
-        with:
-          project_id: cool-plasma-452619-v4
-          version: '426.0.0'
-
-      - name: Configure Docker for GCR
+      
+      # Configure Docker specifically for Artifact Registry (pkg.dev)
+      - name: Configure Docker for Artifact Registry
         run: |
-          gcloud auth configure-docker
-
-      # Build Docker image
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+      
+      # Build Docker image tagged for Artifact Registry
       - name: Build Docker image
         run: |
-          docker build -t gcr.io/cool-plasma-452619-v4/finance-analysis:latest .
+          docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+                       -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest .
 
-      # Push Docker image to Google Container Registry
+      # Push Docker image to Artifact Registry
       - name: Push Docker image
         run: |
-          docker push gcr.io/cool-plasma-452619-v4/finance-analysis:latest
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }} --all-tags
 
-      # Update Cloud Run Job
+      # Update Cloud Run Job using the newly built image
       - name: Update Cloud Run Job
         run: |
-          gcloud run jobs update finance-analysis-job \
-            --image gcr.io/cool-plasma-452619-v4/finance-analysis:latest \
-            --region europe-west3
+          gcloud run jobs update ${{ env.JOB_NAME }} \
+            --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --region ${{ env.REGION }}

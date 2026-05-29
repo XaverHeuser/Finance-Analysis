@@ -5,7 +5,7 @@ options:
 
 steps:
 - name: gcr.io/cloud-builders/docker
-  args: ["build","-t","europe-west1-docker.pkg.dev/finance-analysis-id/finance-analysis-repo/analysis-image:latest","-f","Dockerfile","."]
+  args: ["build","-t","europe-west1-docker.pkg.dev/finance-analysis-id/finance-analysis-repo/finance-analysis-image:latest","-f","Dockerfile","."]
 
 images:
-- "europe-west1-docker.pkg.dev/finance-analysis-id/finance-analysis-repo/analysis-image:latest"
+- "europe-west1-docker.pkg.dev/finance-analysis-id/finance-analysis-repo/finance-analysis-image:latest"
