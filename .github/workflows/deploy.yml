@@ -30,9 +30,6 @@ jobs:
       # Install Cloud SDK
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v3
-        with:
-          project_id: cool-plasma-452619-v4
-          version: '426.0.0'
       
       # Configure Docker specifically for Artifact Registry (pkg.dev) instead of GCR
       - name: Configure Docker for Artifact Registry
@@ -48,7 +45,7 @@ jobs:
       #   run: |
       #     docker build -t gcr.io/cool-plasma-452619-v4/finance-analysis:latest .
       
-          # Build Docker image tagged for Artifact Registry
+      # Build Docker image tagged for Artifact Registry
       - name: Build Docker image
         run: |
           docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
